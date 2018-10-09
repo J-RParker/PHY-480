@@ -30,4 +30,7 @@
 *.exe
 *.out
 *.app
-Testing/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+
+Testing/.ipynb_checkpoints/
+2nd_Order/.ipynb_checkpoints/
+*.lyx~
