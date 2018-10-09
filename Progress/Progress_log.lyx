@@ -7,6 +7,8 @@
 \textclass article
 \begin_preamble
 
+\usepackage{smartdiagram}
+\usesmartdiagramlibrary{additions}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -345,7 +347,7 @@ end{titlepage}
 \end_layout
 
 \begin_layout Section*
-02/09/18 - Preliminary Testing
+02/10/18 - Preliminary Testing
 \end_layout
 
 \begin_layout Standard
@@ -369,6 +371,117 @@ s, around 4.5 times faster.
  such as this project, Fortran is the superior language.
  If time permits, a more relevant comparison of a basic N-body simulation
  could be written to further justify this choice.
+\end_layout
+
+\begin_layout Section*
+09/10/18 - Basic 2nd Order
+\end_layout
+
+\begin_layout Standard
+As a starting point to understand the mechanics of N-body simulation code,
+ a basic 2nd order integrator simulation was written.
+ This method involves taking the current positions of all bodies, calculating
+ the acceleration of each body due to the gravitational forces between them
+ from 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "eq:acc"
+
+\end_inset
+
+, and then using that acceleration to change the position and velocity of
+ the bodies.
+ 
+\begin_inset Formula 
+\begin{equation}
+\vec{a_{i}}=\sum_{i\neq j}\frac{Gm_{j}}{|r_{ij}|^{2}}\cdot\vec{r_{ij}}\label{eq:acc}
+\end{equation}
+
+\end_inset
+
+The term 2nd Order comes from the number of derivatives used when calculating
+ the Taylor expansion of the position and velocity.
+\begin_inset Formula 
+\[
+f(x)=f(a)+\frac{f'(a)}{1!}\cdot(x-a)+\frac{f''(a)}{2!}\cdot(x-a)^{2}...
+\]
+
+\end_inset
+
+As such the position of a body at time 
+\begin_inset Formula $t+dt$
+\end_inset
+
+ is given by
+\begin_inset Formula 
+\[
+r(t+dt)=r(t)+\frac{r'(t)}{1!}\cdot dt+\frac{r''(t)}{2!}\cdot dt^{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+r(t+dt)=r(t)+v(t)\cdot dt+\frac{1}{2}\cdot a(t)\cdot dt^{2}
+\]
+
+\end_inset
+
+And the velocity
+\begin_inset Formula 
+\[
+v(t+dt)=v(t)+\frac{v'(t)}{1!}\cdot dt+\frac{v''(t)}{2!}\cdot dt^{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+v(t+dt)=v(t)+a(t)\cdot dt+\frac{1}{2}\cdot a'(t)\cdot dt^{2}
+\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $a'(t)$
+\end_inset
+
+ is approximated to the average change in acceleration
+\begin_inset Formula 
+\[
+a'(t)\approx\frac{(a(t+dt)-a(t))}{dt}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+v(t+dt)=v(t)+a(t)\cdot dt+\frac{1}{2}(a(t+dt)-a(t))\cdot dt
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+v(t+dt)=v(t)+\frac{1}{2}(a(t+dt)+a(t))\cdot dt
+\]
+
+\end_inset
+
+As the expression for 
+\begin_inset Formula $v(t+dt)$
+\end_inset
+
+ contains 
+\begin_inset Formula $a(t+dt)$
+\end_inset
+
+, the positions must be changed first, then new values of acceleration calculate
+d and finally the velocity of each body can be changed.
 \end_layout
 
 \end_body

@@ -34,3 +34,5 @@
 Testing/.ipynb_checkpoints/
 2nd_Order/.ipynb_checkpoints/
 *.lyx~
+*.lyx#
+

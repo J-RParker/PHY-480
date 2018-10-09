@@ -4,12 +4,12 @@ implicit none
 integer :: i,j,n
 double precision :: r(1:3,1:3), v(1:3,1:3), a(1:3,1:3), a0(1:3,1:3), init(1:3,1:7)
 double precision :: dr(1:3), m(1:3)
-double precision :: dt, t, logt, G, AU, simt, r2, t_init, t_run
+double precision :: dt, t, logt, G, AU, simt, r2, t_init, t_run, t_out
 
 n=3
 dt=1000
 simt=1e10
-logt=0
+t_out=1e6
 
 G=6.67e-11
 AU=149597870700.
@@ -23,12 +23,11 @@ close(10)
 m=init(:,1)
 r=init(:,2:4)
 v=init(:,5:7)
-
-a=0
 a0=0
+a=0
 
 call cpu_time(t_init)
-write(6,'(A,F6.2,A)') 't_int =', t_init,'s'
+write(6,'(A,F6.3,A)') 't_int =', t_init,'s'
 
 open(11,file='sun.txt',status='unknown')
 open(12,file='earth.txt',status='unknown')
@@ -59,7 +58,7 @@ do
     a=0
     t=t+dt
     logt=logt+dt
-    if (logt>1e6) then
+    if (logt>t_out) then
         do i=1,n
             write(i+10,*) r(i,1:3)/AU
         end do
@@ -72,5 +71,5 @@ do i=1,n
     close(i+10)
 end do
 call cpu_time(t_run)
-write(6,'(A,F6.2,A)') 't_run =', t_run,'s'
+write(6,'(A,F6.3,A)') 't_run =', t_run,'s'
 end program
