@@ -12,7 +12,7 @@
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
-\language english
+\language british
 \language_package default
 \inputencoding auto
 \fontencoding global
@@ -394,7 +394,7 @@ reference "eq:acc"
  
 \begin_inset Formula 
 \begin{equation}
-\vec{a_{i}}=\sum_{i\neq j}\frac{Gm_{j}}{|r_{ij}|^{2}}\cdot\vec{r_{ij}}\label{eq:acc}
+\vec{a_{i}}=\sum_{i\neq j}\frac{Gm_{j}}{|r_{ij}|^{2}}\vec{r_{ij}}\label{eq:acc}
 \end{equation}
 
 \end_inset
@@ -403,7 +403,7 @@ The term 2nd Order comes from the number of derivatives used when calculating
  the Taylor expansion of the position and velocity.
 \begin_inset Formula 
 \[
-f(x)=f(a)+\frac{f'(a)}{1!}\cdot(x-a)+\frac{f''(a)}{2!}\cdot(x-a)^{2}...
+f(x)=f(a)+\frac{f'(a)}{1!}(x-a)+\frac{f''(a)}{2!}(x-a)^{2}...
 \]
 
 \end_inset
@@ -415,7 +415,7 @@ As such the position of a body at time
  is given by
 \begin_inset Formula 
 \[
-r(t+dt)=r(t)+\frac{r'(t)}{1!}\cdot dt+\frac{r''(t)}{2!}\cdot dt^{2}
+r(t+dt)=r(t)+\frac{r'(t)}{1!}dt+\frac{r''(t)}{2!}dt^{2}
 \]
 
 \end_inset
@@ -423,7 +423,7 @@ r(t+dt)=r(t)+\frac{r'(t)}{1!}\cdot dt+\frac{r''(t)}{2!}\cdot dt^{2}
 
 \begin_inset Formula 
 \[
-r(t+dt)=r(t)+v(t)\cdot dt+\frac{1}{2}\cdot a(t)\cdot dt^{2}
+r(t+dt)=r(t)+v(t)dt+\frac{1}{2}a(t)dt^{2}
 \]
 
 \end_inset
@@ -431,7 +431,7 @@ r(t+dt)=r(t)+v(t)\cdot dt+\frac{1}{2}\cdot a(t)\cdot dt^{2}
 And the velocity
 \begin_inset Formula 
 \[
-v(t+dt)=v(t)+\frac{v'(t)}{1!}\cdot dt+\frac{v''(t)}{2!}\cdot dt^{2}
+v(t+dt)=v(t)+\frac{v'(t)}{1!}dt+\frac{v''(t)}{2!}dt^{2}
 \]
 
 \end_inset
@@ -439,7 +439,7 @@ v(t+dt)=v(t)+\frac{v'(t)}{1!}\cdot dt+\frac{v''(t)}{2!}\cdot dt^{2}
 
 \begin_inset Formula 
 \[
-v(t+dt)=v(t)+a(t)\cdot dt+\frac{1}{2}\cdot a'(t)\cdot dt^{2}
+v(t+dt)=v(t)+a(t)dt+\frac{1}{2}a'(t)dt^{2}
 \]
 
 \end_inset
@@ -459,7 +459,7 @@ a'(t)\approx\frac{(a(t+dt)-a(t))}{dt}
 
 \begin_inset Formula 
 \[
-v(t+dt)=v(t)+a(t)\cdot dt+\frac{1}{2}(a(t+dt)-a(t))\cdot dt
+v(t+dt)=v(t)+a(t)dt+\frac{1}{2}(a(t+dt)-a(t))dt
 \]
 
 \end_inset
@@ -467,7 +467,7 @@ v(t+dt)=v(t)+a(t)\cdot dt+\frac{1}{2}(a(t+dt)-a(t))\cdot dt
 
 \begin_inset Formula 
 \[
-v(t+dt)=v(t)+\frac{1}{2}(a(t+dt)+a(t))\cdot dt
+v(t+dt)=v(t)+\frac{1}{2}(a(t+dt)+a(t))dt
 \]
 
 \end_inset
@@ -482,6 +482,166 @@ As the expression for
 
 , the positions must be changed first, then new values of acceleration calculate
 d and finally the velocity of each body can be changed.
+\end_layout
+
+\begin_layout Section*
+11/10/18 - Corrections and Initialisation
+\end_layout
+
+\begin_layout Standard
+In this preliminary version of the simulation, several issues are present,
+ first among them is the overall motion of the system with respect to the
+ origin.
+ This is caused by the mean motion of the system's centre of mass which
+ is also not located at the origin.
+ To fix this issue, the positions of the centre of mass and velocity were
+ calculated and then all bodies had their positions and velocities slightly
+ adjusted to zero both centres.
+\begin_inset Formula 
+\[
+{\rm CoM}=\sum_{i}\frac{m_{i}\vec{r_{i}}}{m_{tot}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+{\rm CoV}=\sum_{i}\frac{m_{i}\vec{v_{i}}}{m_{tot}}
+\]
+
+\end_inset
+
+These corrections leave the centre of mass of the system stationary and
+ positioned at the origin, allowing for easier plotting of the output of
+ the simulation.
+\end_layout
+
+\begin_layout Standard
+The next additions to the simulation was the functionality to measure and
+ record energy conservation.
+ As an isolated system, only interacting through gravity, the overall energy
+ of the system should remain constant over the course of the simulation.
+ To asses this, the total kinetic and potential energy was calculated both
+ at the start of the simulation and at various points throughout it.
+ This magnitude of this relative change in energy can be used to asses the
+ efficacy of the simulation.
+\begin_inset Formula 
+\[
+E_{k}=\sum_{i}\frac{1}{2}m_{i}v_{i}^{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+E_{p}=\sum_{i=1}^{n-1}\sum_{j=i+1}^{n}-\frac{Gm_{i}m_{j}}{|r_{ij}|}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+E_{0}=E_{k,0}+E_{p,0}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+E_{t}=E_{k}+E_{p}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\Delta E=\frac{(E_{0}-E_{t})}{E_{0}}
+\]
+
+\end_inset
+
+The next step in developing this version of the simulation involved switching
+ from simulating three bodies (Earth, Jupiter and the Sun) to all eight
+ planets and the Sun.
+ This increase of 
+\begin_inset Formula $N$
+\end_inset
+
+ from 3 to 9 increases the number of calculations per time step by a factor
+ of 
+\begin_inset Formula $\approx\nicefrac{3^{2}}{9^{2}}\approx9$
+\end_inset
+
+, increasing runtime from ~3 seconds to ~30, still well within reasonable
+ limits for repeated testing.
+ During the previous development session, the simulation had been written
+ to load initial values for the mass, position and velocity of each body
+ from an external text file, rather than have a large section of variable
+ assignment within the main code block.
+ This was done for ease of reading the main code file although initially,
+ all values in the text file were entered manually.
+ To improve upon this for the extension to 9 bodies, a second program was
+ written, named init.f90, to handle the creation of this init text file.
+ To create a simplified initial setup, each planet was assumed to be on
+ a circular orbit with radius equal to it's semi-major axis, 
+\begin_inset Formula $a$
+\end_inset
+
+, and a circular velocity given by 
+\begin_inset Formula 
+\[
+v_{c}=\sqrt{\frac{GM_{\odot}}{a}}
+\]
+
+\end_inset
+
+To avoid the unrealistic scenario of all planets being lined up along the
+ x-axis, each planet was given a starting angle from the x-axis such tat
+ they were equally distributed around a circle.
+ As this is only a simple approximation top the solar system, the effects
+ of orbital inclination have been totally neglected, meaning all motion
+ occurs entirely within the x-y plane.
+ This situation could be changed however with the use of different initial
+ conditions, potentially involving a more realistic depiction of orbital
+ motion.
+\end_layout
+
+\begin_layout Standard
+As well as setting the initial positions and velocities of all bodies, the
+ init code was also modified to contain the CoM/CoV corrections as those
+ only need to be performed once and as such can be excluded from the main
+ code in order to reduce code complexity and thus runtime.
+\end_layout
+
+\begin_layout Subsection*
+Miscellaneous changes
+\end_layout
+
+\begin_layout Itemize
+Renamed code from new.f90 to main.f90 to increase legibility
+\end_layout
+
+\begin_layout Itemize
+Renamed several variables concerning time logging and output intervals to
+ create distinction between position and energy output counts.
+\end_layout
+
+\begin_layout Itemize
+Changed position output files from named '*.txt' to auto named 'fort.N' where
+ N=body index+10 to allow for variable numbers of bodies.
+ Energy conservation output left unchanged.
+ n.b These files are still readable by Python for plotting outputs
+\end_layout
+
+\begin_layout Itemize
+Changed main position, velocity, acceleration and mass arrays to be allocatable
+ after declaration and now use the value of n to size arrays correctly.
+ Now only need to change n in one place, further reducing hard-coding.
 \end_layout
 
 \end_body

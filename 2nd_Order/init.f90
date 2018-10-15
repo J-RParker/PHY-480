@@ -82,7 +82,7 @@ do i=1,n
     v(i,:)=v(i,:)-CoV(:)
 end do
 
-open(10,file='init2.txt',status='unknown')
+open(10,file='init.txt',status='unknown')
 write(10,*) m(1:n)
 do i=1,3
     write(10,*) r(1:n,i)

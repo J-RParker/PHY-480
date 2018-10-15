@@ -1,4 +1,4 @@
-program new
+program Main
 implicit none
 
 integer :: i,j,n
@@ -7,7 +7,7 @@ double precision, Allocatable :: r(:,:), v(:,:), a(:,:), a0(:,:) !(body index, x
 double precision, Allocatable :: m(:) !(body index)
 double precision :: dr(1:3) !(xyz data)
 double precision :: dt, t, t_count_pos, t_count_en, simt, t_init, t_run, t_log_pos, t_log_en
-double precision :: G, AU, r2, kE, pE, E0, En, dE
+double precision :: G, AU, r2, kE, pE, E0, Et, dE
 
 n=9
 
@@ -26,7 +26,7 @@ Allocate(r(1:n,1:3), v(1:n,1:3), a(1:n,1:3), a0(1:n,1:3))
 Allocate(m(1:n))
 Allocate(init(1:n,1:7))
 
-open(10,file='init2.txt',status='old')
+open(10,file='init.txt',status='old')
 read(10,*) init
 close(10)
 
@@ -102,8 +102,8 @@ do
                 pE=pE-G*m(i)*m(j)/r2
             end do
         end do
-        En=kE+pE
-        dE=(E0-En)/E0
+        Et=kE+pE
+        dE=(E0-Et)/E0
         write(10,*) dE
         t_count_en=0
     end if
