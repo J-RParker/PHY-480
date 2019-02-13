@@ -7,8 +7,7 @@
 \textclass article
 \begin_preamble
 
-\usepackage{smartdiagram}
-\usesmartdiagramlibrary{additions}
+\usepackage{siunitx}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -642,6 +641,141 @@ Changed position output files from named '*.txt' to auto named 'fort.N' where
 Changed main position, velocity, acceleration and mass arrays to be allocatable
  after declaration and now use the value of n to size arrays correctly.
  Now only need to change n in one place, further reducing hard-coding.
+\end_layout
+
+\begin_layout Section*
+17/10/18 - Output Experiments
+\end_layout
+
+\begin_layout Standard
+N.b.
+ This section refers to the changes and commit made to the Experimental
+ branch on the project repository.
+ All changes will not be transferred to the master branch unless specified
+ in future entries.
+\end_layout
+
+\begin_layout Standard
+As an initial attempt to optimise the running of the simulation the output
+ sections of the code were re-written.
+ Firstly, rather than write out the position or energy change each output
+ loop, two new arrays were created to store the outputs in during the course
+ of the simulation.
+ To size the arrays appropriately, the simulation time was divided by the
+ logging interval and the array dimensions allocated.
+ As each output array required an additional dimension to the values it
+ stored, the Energy conservation output array is a 1-D array and the position
+ output is a 3-D tensor array.
+ Once the main loop has concluded, the code opens a series of files and
+ writes the output to them in (n+1) operations.
+ In order to increase human-readability in the output, each body's position
+ file was dynamically named to 'body_i_pos' where i represents the body
+ index.
+ For organisational reasons, a 'Data' subfolder was created to store the
+ output files without cluttering the main directory.
+ 
+\end_layout
+
+\begin_layout Standard
+The next experimental change was to try to use the unformatted data option,
+ again for greater write speed.
+ This change means all output files are changed to .dat types and become
+ completely unreadable by humans.
+ As such the scipy.io class FortranFile was used to read the data and plot
+ the output.
+ This solution was not the first attempt however, initially the numpy function
+ fromfile was used but this was unable to read the data due to an incompatibilit
+y with the data types.
+ The problem arose due to the difference between the 8-byte double precision
+ and the maximum sized np.float64 used by Fortran and numpy respectively.
+ The exact cause of the difference was not known as both types should be
+ 64-bit numbers but for some reason, numpy read each number in the .dat file
+ as two numbers, meaning the results were totally scrambled.
+ Rather than spend additional time attempting to determine the exact reason
+ for this, the scipy class provided an equally simple solution and sop was
+ selected as the preferred method for reading unformatted data.
+\end_layout
+
+\begin_layout Standard
+As noted above, these changes are regarded as experimental and will not
+ all be included in the main code branch, however some will be used to influence
+ the future development of the project.
+ The dynamic naming of output files will definitely be retained but the
+ changes to unformatted and bulk output will probably not be kept for now.
+ At present, the simulation is running for 
+\begin_inset Formula $\num{1e10}$
+\end_inset
+
+ seconds, around 320 years, logging the energy conservation and position
+ every 
+\begin_inset Formula $\num{1e7}$
+\end_inset
+
+ seconds.
+ This results in 
+\begin_inset Formula $1000$
+\end_inset
+
+ data points, a number reasonably easily stored in memory during the running
+ of the simulation, although with 9 bodies and 3 dimensions, the total number
+ of stored values reaches 28000.
+ The problem with this approach is evident when one considers the eventual
+ goal of this project, namely the ability to simulate the solar system over
+ the course of several million years.
+ This approach of holding the output in memory and writing the entire file
+ in one operation would entail holding a number on the order of 
+\begin_inset Formula $\num{1e12}$
+\end_inset
+
+ values in memory, which is absolutely impossible.
+ As such this approach will be abandoned until such a time as the time spent
+ writing to file becomes a significant problem during the execution of the
+ full code.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Miscellaneous changes
+\end_layout
+
+\begin_layout Itemize
+Added an output file containing the number of bodies, timestep, simulation
+ time and logging intervals to read in python to aid in plotting outputs.
+ This is likely to return to the main code.
+\end_layout
+
+\begin_layout Section*
+08/02/19 - 4th Order development commences
+\end_layout
+
+\begin_layout Standard
+From this point in the project all further work will be done in the '4th_Order'
+ folder to keep the initial work done in developing the second order scheme
+ separate from this semester's progress.
+ To begin, the initialisation code used to generate the starting conditions
+ for the simulation was copied to this directory and modified to also include
+ the number of bodies being considered in the output file, 'init.txt'.
+ The next step is to begin to recreate the 2nd order code to bootstrap the
+ 4th order to be written later.
+ This was begun by first reading 
+\begin_inset Formula $N$
+\end_inset
+
+ from the init file, allocating all relevant arrays then reading in the
+ initial conditions for the simulation.
+ This more flexible approach allows for the possibility of simply feeding
+ the compiled simulation a different set of initial parameters and thus
+ modelling different systems.
+ Due to the requirements of the 4hth order code, the arrays for the velocity
+ and acceleration of each body were extended into 3 dimensions to store
+ past information about those parameters (body, axis, time).
+ Currently the 3rd axis of the array is defined from 1:8 although this may
+ change to be from -6:1 to make it easier to see which array slice corresponds
+ to which past timestep.
+ With these parameters stored the total initial energy of the system was
+ calculated to provide a way to measure the accuracy of the simulation at
+ a later time.
+ 
 \end_layout
 
 \end_body

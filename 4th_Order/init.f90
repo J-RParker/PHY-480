@@ -102,6 +102,7 @@ do i=1,n
 end do
 
 open(10,file='init.txt',status='unknown')
+write(10,*) n
 write(10,*) m(1:n)
 do i=1,3
     write(10,*) r(1:n,i)
