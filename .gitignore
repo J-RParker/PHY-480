@@ -37,3 +37,6 @@ Report/
 *.lyx~
 *.lyx#
 
+4th_Order/.ipynb_checkpoints/
+mcgraw-hill-numerical-methods-using-matlab.pdf
+4th_Order/Data/

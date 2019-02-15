@@ -778,5 +778,113 @@ From this point in the project all further work will be done in the '4th_Order'
  
 \end_layout
 
+\begin_layout Section*
+13/02/19 - Theory work and planning code
+\end_layout
+
+\begin_layout Standard
+Most of today's work has been on the theory of the Adams-Bashforth-Moulton
+ method and planning out what I need to code up tomorrow, as such there's
+ not a great deal of work to show for today.
+ I have a meeting with Simon tomorrow to review the Semester 1 report so
+ I'm going to take a copy of what I think the relevant equations are and
+ make sure I'm doing the right thing before blindly driving forwards and
+ coding the wrong thing.
+\end_layout
+
+\begin_layout Standard
+I've also written the bootstrap code today and slightly rearranged the data
+ structure of the v and a arrays.
+ They now run from -6:1 and are populated with past values from -6:0 by
+ the bootstrap code.
+ To make sure I only generate 7 points without needing an IF statement I've
+ looped over a bootstrap index 'bs' to make sure each value is placed at
+ the correct location in its array.
+ I've also removed the a0 array as it's no longer necessary to store the
+ different values of acceleration in separate arrays as that's why we have
+ the 3d arrays.
+\end_layout
+
+\begin_layout Section*
+14/02/19 - 4th order stepping
+\end_layout
+
+\begin_layout Standard
+After confirming with Simon as to the equations I'm using, I've begun to
+ write the main loop of the simulation.
+ This proceeds by predicting values for r and v, calculating new accelerations
+ with those predicted positions, then finally correcting r and v with the
+ predicted velocities and calculated accelerations respectively.
+ Once this has occurred, the global time counter is incremented by dt, as
+ well as the time since last output counter.
+ If the output counter exceeds a particular value, the newly corrected positions
+ from that loop are written to a file, which is numbered by the internal
+ body index rather than a body name.
+ This allows the system to maintain generality and provides the options
+ to run on any given input.
+ If the simulation has not yet reached it's maximum runtime, the two 3d
+ arrays, v and a, are shuffled to remove the 
+\begin_inset Formula $t_{k-6}$
+\end_inset
+
+ value and clear a space in the 
+\begin_inset Formula $t_{k+1}$
+\end_inset
+
+ slot for the next incremented value.
+ After this the loop repeats, albeit currently with a fixed value of the
+ initial timestep.
+ Currently running a 
+\begin_inset Formula $\num{1e8}$
+\end_inset
+
+ second simulation (~3 years) takes ~ 1minute with a timestep of 100s.
+ hopefully this should drop dramatically once the variable timestep is implement
+ed which is tomorrow's task.
+\end_layout
+
+\begin_layout Section*
+15/02/19 - Variable timestep
+\end_layout
+
+\begin_layout Standard
+This took a while.
+ I've spent most of today working on a whiteboard to figure out the relationship
+s between the 3d arrays before and after the timestep changes.
+ I've also been working in a little test program to work out exactly how
+ to implement the conditions needed to trigger a change in the timestep.
+ The array manipulation isn't too bad, doubling the timestep is easier because
+ I just copy every other value into the first 4 slots and ignore the back
+ three, although this means I have to stop the program form doubling the
+ timestep again until at least 3 loops have been done or some of the copied
+ values will be garbage.
+ The halving is more trick as I have to write the interpolated values to
+ a separate array, then overwrite the relevant bits of the real arrays otherwise
+ I'll use the wrong values in whichever interpolation is done second.
+ It looks messy in the code but conceptually it's not too difficult.
+ The conditions for the changes turn out to be relatively easy to implement
+ as FORTRAN has any() and all() functions to asses if, unsurprisingly, any
+ or all of the logical conditions given are true.
+ By combining these functions and the ability to check all elements of an
+ array against a condition simultaneously, I can easily compare the error
+ in r and v to the somewhat arbitrary relative error value.
+ I also used the .and.
+ operator to force the doubling not to occur within 3 loops of another change
+ to the timestep, as well as to not exceed a maximum value.
+ This does work and it's sped up the simulations massively, I can now simulate
+ 300 years in under 10 seconds, although as far as I can tell, the system
+ mostly shoots to it's maximum timestep and stays there, raising this maximum
+ allowed step makes the output less accurate, especially for the inner planets.
+ There are probably some subtle ways tom improve this without changing too
+ much although from these runs I can really see the appeal of multiple particle
+ timesteps, I'll definitely have to look into that when the bulk of the
+ program is written and working well which should hopefully be in a couple
+ of weeks.
+ It occurs to me as I write this log that I haven't added anything to this
+ version of the code to measure the energy conservation.
+ I'll add this at some point soon, maybe before the next meeting on Tuesday
+ if I have time,
+\end_layout
+
 \end_body
 \end_document
